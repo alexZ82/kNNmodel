@@ -21,13 +21,12 @@ localNeighbourhoodWithPruningComplete<-function(distances,r,labels){
   temp<-temp[order(temp$distances),]
   groups<-rle(temp$labels)
   tmp <- groups$values-groups$values[1]
-  tmpS <- which(tmp==0)
   tmpN<-which(tmp!=0)
   place<-tail(which(cumsum(groups$lengths[tmpN])<=r),1)
   if(length(place)>0){
-    cluster.size = sum(groups$lengths[1:(tmpN[place]+1)])
+    cluster.size <- sum(groups$lengths[1:min(length(groups$lengths),(tmpN[place]+1))])
   }else{
-    cluster.size = groups$lengths[1]
+    cluster.size <- groups$lengths[1]
   }
   cluster.distance<-temp$distances[cluster.size]
   cluster.class<-groups$values[1]
@@ -73,9 +72,7 @@ globalNeighbourhoodWithPruning<-function(distances,r,labels){
     clstr<-clstr+1
     tmp<- subset(theLocals, bound=='u')
     tmp <- tmp[with(tmp, order(-cluster.size,-cluster.distance)),]
-    head(tmp)
     clusters[clstr,]<-as.matrix(tmp[1,1:4])
-    head(clusters)
     clusterMembers<-localInstancesWithPruning(distances[clusters[clstr,4],],clusters[clstr,3])
     theLocals$bound[theLocals$instances %in% c(clusterMembers)]='b'
   }
