@@ -20,9 +20,9 @@ localNeighbourhoodWithPruningComplete<-function(distances,r,labels){
   temp<-data.frame(distances,labels)
   temp<-temp[order(temp$distances),]
   groups<-rle(temp$labels)
-  tmp <- groups$values-groups$values[1]
-  tmpS <- which(tmp==0)
-  tmpN<-which(tmp!=0)
+  tmp <- groups$values-groups$values[1] # difference from first class
+  tmpS <- which(tmp==0) # which ones are the same 
+  tmpN<-which(tmp!=0) # which ones are different
   place<-tail(which(cumsum(groups$lengths[tmpN])<=r),1)
   if((length(tmpS)>1)&(length(place)!=0)){
     cluster.size<-cumsum(groups$lengths)[tmpN[place]-1]
@@ -62,22 +62,20 @@ globalNeighbourhood<-function(distances,labels){
   return(theClusters)
 }
 
-globalNeighbourhoodWithPruning<-function(distances,r,labels){
+globalNeighbourhoodWithPruning<-function(distances,r=0,labels){
   allLocals<-apply(distances,2,localNeighbourhoodWithPruningComplete,r,labels)
   theLocals<-data.frame(t(allLocals))
   theLocals$instances<-1:nrow(theLocals)
-  theLocals$bound<-rep('u',nrow(theLocals))
-  clusters<-array(NA,c(nrow(theLocals),4))
+  theLocals$bound <- F
+  clusters <- matrix(NA, nrow=nrow(theLocals), ncol=4)
   clstr<-0
-  while(length(theLocals$bound[theLocals$bound=='u'])>0){
+  while(!all(theLocals$bound)) {
     clstr<-clstr+1
-    tmp<- subset(theLocals, bound=='u')
-    tmp <- tmp[with(tmp, order(-cluster.size,cluster.distance)),]
-    head(tmp)
+    tmp<- subset(theLocals, !bound)
+    tmp <- tmp[with(tmp, order(-cluster.size, cluster.distance)),]
     clusters[clstr,]<-as.matrix(tmp[1,1:4])
-    head(clusters)
     clusterMembers<-localInstancesWithPruning(distances[clusters[clstr,4],],clusters[clstr,3])
-    theLocals$bound[theLocals$instances %in% c(clusterMembers)]='b'
+    theLocals$bound[theLocals$instances %in% c(clusterMembers)] <- T
   }
   theClusters<-clusters[!is.na(clusters[,1]),]
   return(theClusters)
