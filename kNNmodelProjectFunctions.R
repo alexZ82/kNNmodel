@@ -24,10 +24,10 @@ localNeighbourhoodWithPruningComplete<-function(distances,r,labels){
   tmpS <- which(tmp==0)
   tmpN<-which(tmp!=0)
   place<-tail(which(cumsum(groups$lengths[tmpN])<=r),1)
-  if((length(tmpS)>1)&(length(place)!=0)){
-    cluster.size<-cumsum(groups$lengths)[tmpN[place]-1]
+  if(length(place)>0){
+    cluster.size = sum(groups$lengths[1:(tmpN[place]+1)])
   }else{
-    cluster.size<-groups$lengths[1]
+    cluster.size = groups$lengths[1]
   }
   cluster.distance<-temp$distances[cluster.size]
   cluster.class<-groups$values[1]
