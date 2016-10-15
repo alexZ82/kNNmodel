@@ -72,7 +72,7 @@ globalNeighbourhoodWithPruning<-function(distances,r,labels){
   while(length(theLocals$bound[theLocals$bound=='u'])>0){
     clstr<-clstr+1
     tmp<- subset(theLocals, bound=='u')
-    tmp <- tmp[with(tmp, order(-cluster.size,cluster.distance)),]
+    tmp <- tmp[with(tmp, order(-cluster.size,-cluster.distance)),]
     head(tmp)
     clusters[clstr,]<-as.matrix(tmp[1,1:4])
     head(clusters)

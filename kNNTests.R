@@ -7,6 +7,8 @@ theClasses<-rep(1:3,each=50)
 kNN_iris <- globalNeighbourhoodWithPruning(i_dist,1,theClasses)
 # 
 #Glass example
+library(mlbench)
+data(Glass)
 glass <-Glass[,-10]
 glclasses<-as.numeric(as.matrix(Glass[,10]))
 g_dist<-as.matrix(dist(glass,method ='euclidean',upper=TRUE))
