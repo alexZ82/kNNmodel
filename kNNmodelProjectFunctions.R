@@ -64,7 +64,7 @@ globalNeighbourhood<-function(distances,labels){
 globalNeighbourhoodWithPruning<-function(distances,r,labels){
   allLocals<-apply(distances,2,localNeighbourhoodWithPruningComplete,r,labels)
   theLocals<-data.frame(t(allLocals))
-  theLocals$instances<-1:nrow(theLocals)
+  theLocals$instance<-1:nrow(theLocals)
   theLocals$bound<-rep('u',nrow(theLocals))
   clusters<-array(NA,c(nrow(theLocals),4))
   clstr<-0
@@ -74,7 +74,7 @@ globalNeighbourhoodWithPruning<-function(distances,r,labels){
     tmp <- tmp[with(tmp, order(-cluster.size,-cluster.distance)),]
     clusters[clstr,]<-as.matrix(tmp[1,1:4])
     clusterMembers<-localInstancesWithPruning(distances[clusters[clstr,4],],clusters[clstr,3])
-    theLocals$bound[theLocals$instances %in% c(clusterMembers)]='b'
+    theLocals$bound[theLocals$instance %in% clusterMembers]='b'
   }
   theClusters<-clusters[!is.na(clusters[,1]),]
   return(theClusters)
