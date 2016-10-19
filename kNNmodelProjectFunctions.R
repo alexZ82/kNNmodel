@@ -91,7 +91,10 @@ globalNeighbourhood<-function(distances,labels){
 }
 
 globalNeighbourhoodWithPruning<-function(distances,r=0,labels){
+
+  # step 3
   allLocals<-apply(distances,2,localNeighbourhoodWithPruningComplete,r,labels)
+
   theLocals<-data.frame(t(allLocals))
   theLocals$instances<-1:nrow(theLocals)
   theLocals$bound <- F
@@ -100,10 +103,12 @@ globalNeighbourhoodWithPruning<-function(distances,r=0,labels){
   while(!all(theLocals$bound)) {
     clstr<-clstr+1
     tmp<- subset(theLocals, !bound)
-    tmp <- tmp[with(tmp, order(-cluster.size, cluster.distance)),]
+    tmp <- tmp[with(tmp, order(-cluster.size, -cluster.distance)),]
     clusters[clstr,]<-as.matrix(tmp[1,1:4])
-    clusterMembers<-localInstancesWithPruning(distances[clusters[clstr,4],],clusters[clstr,3])
-    theLocals$bound[theLocals$instances %in% c(clusterMembers)] <- T
+    cluster.size <- clusters[clstr, 3]
+    instance <- clusters[clstr, 4]
+    clusterMembers <- localInstancesWithPruning(distances[instance, ], cluster.size)
+    theLocals$bound[theLocals$instances %in% clusterMembers] <- T
   }
   theClusters<-clusters[!is.na(clusters[,1]),]
   return(theClusters)
