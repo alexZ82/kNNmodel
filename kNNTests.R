@@ -2,9 +2,9 @@ source("./kNNmodelProjectFunctions.R")
 #Iris example
 iris2 <- iris[,-5]
 species_labels <- iris[,5]
-i_dist<-as.matrix(dist(iris2,method ='euclidean',upper=TRUE))
-theClasses<-rep(1:3,each=50)
-kNN_iris <- globalNeighbourhoodWithPruning(i_dist,1,theClasses)
+distances <- as.matrix(dist(iris2,method ='euclidean',upper=TRUE))
+labels <- as.numeric(species_labels)
+kNN_iris <- globalNeighbourhoodWithPruning(distances, 1, labels)
 # 
 #Glass example
 library(mlbench)
